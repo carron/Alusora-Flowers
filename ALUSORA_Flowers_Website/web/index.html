@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#244b3c">
+  <meta name="description" content="ALUSORA Flowers — handcrafted everyday bouquets, holiday flowers and event florals in London, Ontario. Choose your blooms, order online and pick up at Cherryhill Village Mall.">
+  <title>ALUSORA Flowers | Little Flowers. Big Feelings.</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="announcement"><span class="announcement-flower">✳</span><span class="announcement-brand">Handcrafted in London, Ontario</span><span class="announcement-sep">•</span><span class="announcement-detail">Thoughtful flowers for every occasion</span><span class="announcement-flower">✳</span></div>
+  <header class="site-header">
+    <div class="shell nav-bar">
+      <a href="#top" class="brand" aria-label="ALUSORA Flowers home">
+        <span class="brand-mark" aria-hidden="true">✿</span>
+        <span class="brand-type">ALUSORA <small>FLOWERS</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#shop">Shop flowers</a>
+        <a href="#build">Build a bouquet</a>
+        <a href="#events">Events & weddings</a>
+        <a href="#story">Our story</a>
+      </nav>
+      <button class="cart-top" id="open-cart" type="button" aria-label="Open shopping bag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16l-1 12H5L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+        <span class="cart-label">Your bag</span><span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+    <nav class="mobile-links shell" aria-label="Mobile navigation"><a href="#shop">Shop</a><a href="#build">Custom bouquet</a><a href="#events">Event quotes</a><a href="#story">About</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> A SMALL GESTURE. A BEAUTIFUL FEELING.</div>
+          <h1>Little flowers.<br><em>Big feelings.</em></h1>
+          <p>Flowers have a way of saying what words can't. Choose a handcrafted bouquet, make it your own, and bring a little joy to someone's day.</p>
+          <div class="hero-buttons"><a class="btn btn-dark" href="#shop">Shop bouquets <span aria-hidden="true">↗</span></a><a class="text-link" href="#build">Create your own <span aria-hidden="true">→</span></a></div>
+          <div class="hero-foot"><span class="dot"></span> Ready to gift <span class="small-separator"></span> Pick up in London, Ontario</div>
+        </div>
+        <div class="hero-art"><div class="hero-art-circle"></div><img src="/assets/hero.svg" alt="Botanical illustration of a romantic hand-wrapped flower bouquet"><div class="hero-stamp"><span>made with</span><strong>love</strong><span>in London ♡</span></div><span class="hero-side-label">ALUSORA • FLOWERS • ONTARIO</span></div>
+      </div>
+    </section>
+    <div class="value-strip"><div class="shell value-items"><span>✺ &nbsp; Handcrafted with care</span><span>✺ &nbsp; Personal touches included</span><span>✺ &nbsp; Planned Cherryhill pickup</span></div></div>
+
+    <section class="section shop-section" id="shop">
+      <div class="shell">
+        <div class="section-header">
+          <div><p class="eyebrow mini">THE LITTLE THINGS MATTER</p><h2>Flowers for <em>every moment.</em></h2><p class="section-intro">From just-because bouquets to festive favourites. Made thoughtfully, ready for giving.</p></div>
+          <div class="catalog-controls" role="group" aria-label="Filter bouquets"><button class="pill active" data-filter="All" aria-pressed="true">All flowers</button><button class="pill" data-filter="Everyday" aria-pressed="false">Everyday</button><button class="pill" data-filter="Holiday" aria-pressed="false">Holiday</button></div>
+        </div>
+        <div class="product-grid" id="product-grid" aria-live="polite"><p class="loading">Gathering fresh flowers...</p></div>
+        <p class="product-disclaimer">Artwork is illustrative. Seasonal flowers and colours may vary. All prices shown in CAD, before applicable HST. Availability is updated when you place an order.</p>
+      </div>
+    </section>
+
+    <section class="builder-section" id="build">
+      <div class="shell builder-layout">
+        <div class="builder-heading"><p class="eyebrow mini">A BOUQUET AS UNIQUE AS YOU</p><h2>Picked by you.<br><em>Wrapped by us.</em></h2><p>Make it personal. Select your favourite blooms, choose a colour palette, and we'll put together something lovely for you.</p><div class="builder-illustration"><img src="/assets/apricot.svg" alt="Illustrated custom bouquet in soft peach colours"></div></div>
+        <div class="builder-panel">
+          <div class="panel-topline"><span>01 / YOUR FLOWERS</span><span class="builder-badge">Build your own</span></div>
+          <h3>Choose your blooms</h3><p class="form-help">Select between 3 and 24 stems. Each selection draws from our live inventory.</p>
+          <div id="flower-options" class="flower-options"><p class="loading">Loading flowers...</p></div>
+          <div class="field-label">YOUR COLOUR MOOD</div>
+          <div class="palette-grid" id="palette-options"><button type="button" class="palette-btn selected" data-palette="Blush & cream"><span class="palette-dots"><i style="background:#c68b9b"></i><i style="background:#f0d6cc"></i><i style="background:#faf1e6"></i></span>Blush & cream</button><button type="button" class="palette-btn" data-palette="Winter white"><span class="palette-dots"><i style="background:#fcf7ef"></i><i style="background:#ced6be"></i><i style="background:#e6d9d5"></i></span>Winter white</button><button type="button" class="palette-btn" data-palette="Warm sunset"><span class="palette-dots"><i style="background:#e0a182"></i><i style="background:#b56661"></i><i style="background:#dfc7a4"></i></span>Warm sunset</button><button type="button" class="palette-btn" data-palette="Florist’s choice"><span class="palette-dots"><i style="background:#a7b99b"></i><i style="background:#d3a6ae"></i><i style="background:#e9c5a1"></i></span>Florist's choice</button></div>
+          <div class="field-label">FINISHING TOUCH</div>
+          <div class="finish-options" id="finish-options"><label><input type="radio" name="finish" value="wrapped" checked><span><strong>Hand-wrapped</strong><small>Thoughtful gift wrapping · included</small></span></label><label><input type="radio" name="finish" value="vase"><span><strong>With a vase</strong><small>Arranged & ready to display · +$10</small></span></label></div>
+          <div class="builder-bottom"><div><span class="muted">Your bouquet <span id="selected-stems">0 stems</span></span><div class="builder-price" id="builder-price">$5.99 <small>CAD</small></div></div><button id="add-custom" class="btn btn-dark" type="button" disabled>Add to bag <span aria-hidden="true">↗</span></button></div>
+          <p class="builder-availability" id="builder-message" aria-live="polite">Choose at least 3 stems to add to your bag. Colour preferences are subject to floral availability.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="events-section section" id="events">
+      <div class="shell event-layout">
+        <div class="event-copy"><p class="eyebrow mini">SPECIAL DAYS, BEAUTIFULLY DONE</p><h2>Life's big moments<br>deserve <em>beautiful flowers.</em></h2><p>Birthday flowers, wedding centrepieces, baby showers, corporate gifting — tell us what you're imagining and we'll put together a custom quote.</p><div class="event-quote"><span class="event-quote-decoration">❝</span> The most memorable celebrations start with the little details.</div><div class="event-note"><span class="note-icon">✦</span><span><strong>Designed around your occasion.</strong><br>Requesting a quote doesn't reserve flowers or confirm a booking. We'll review availability and contact you.</span></div></div>
+        <form id="event-form" class="event-form">
+          <div class="form-kicker">LET'S PLAN SOMETHING LOVELY</div><h3>Request your event quote</h3>
+          <div class="two-cols"><label>Your name <input name="name" maxlength="100" required placeholder="Full name" autocomplete="name"></label><label>Email address <input name="email" type="email" maxlength="160" required placeholder="you@example.com" autocomplete="email"></label></div>
+          <div class="two-cols"><label>Phone number <input name="phone" type="tel" maxlength="35" required placeholder="519-555-0123" autocomplete="tel"></label><label>Type of event <select name="event_type" required><option value="">Select an occasion</option><option>Birthday</option><option>Wedding</option><option>Corporate</option><option>Baby shower</option><option>Graduation</option><option>Other</option></select></label></div>
+          <div class="two-cols"><label>Event date <input type="date" name="event_date" required></label><label>Estimated guests <input name="guests" type="number" min="1" max="5000" placeholder="e.g. 60" required></label></div>
+          <div class="two-cols"><label>What do you need? <select name="arrangements" required><option value="">Choose an option</option><option>Table centrepieces</option><option>Gift bouquets</option><option>Bridal & wedding flowers</option><option>Venue arrangements</option><option>Mixed floral package</option><option>Not sure yet</option></select></label><label>Approximate floral budget <select name="budget" required><option value="">Choose a range</option><option>Under $150</option><option>$150–$300</option><option>$300–$600</option><option>$600–$1,000</option><option>$1,000+</option><option>Need guidance</option></select></label></div>
+          <div class="two-cols"><label>Estimated floral pieces <input name="quantity" type="number" min="1" max="300" placeholder="e.g. 8" required></label><div class="estimate-display" id="event-estimate"><small>ILLUSTRATIVE STARTING RANGE</small><strong>Choose your pieces</strong><span>Planning estimate only, not a binding quote.</span></div></div>
+          <label>Colour palette or flower preferences <input name="palette" maxlength="80" required placeholder="e.g. blush pink, ivory & sage"></label>
+          <label>Anything else we should know? <textarea name="message" rows="3" maxlength="1200" placeholder="Tell us about your vision, number of arrangements, delivery requirements..."></textarea></label>
+          <label class="consent"><input type="checkbox" name="consent" required><span>I agree to be contacted about this event request. My details will only be used to respond to my enquiry.</span></label>
+          <button type="submit" class="btn btn-dark form-submit">Send my request <span aria-hidden="true">↗</span></button><p class="form-feedback" id="event-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="story-section" id="story"><div class="shell story-grid"><div class="story-icon">✿</div><div><p class="eyebrow mini">MADE WITH HEART, HERE IN LONDON</p><h2>Because flowers<br>make the ordinary <em>special.</em></h2></div><div class="story-description"><p>ALUSORA Flowers is a small floral concept built around thoughtful details — approachable bouquets, personal messages, and everyday reasons to give.</p><div class="location-box"><span class="location-pin">⌖</span><span><strong>Cherryhill Village Mall</strong><br>301 Oxford St W, London, ON<br><small>Proposed kiosk location; confirm operating status before launch.</small></span></div></div></div></section>
+  </main>
+  <footer class="footer"><div class="shell footer-flex"><div><a class="footer-brand" href="#top">ALUSORA <span>FLOWERS</span></a><p>Little Flowers. Big Feelings.</p></div><div><strong>EXPLORE</strong><a href="#shop">Shop flowers</a><a href="#build">Build a bouquet</a><a href="#events">Event quotes</a></div><div><strong>VISIT</strong><span>Cherryhill Village Mall</span><span>London, Ontario, Canada</span><span>Pickup • Pay in person</span></div></div><div class="shell footer-bottom">© <span id="year"></span> ALUSORA Flowers <span>Illustrative storefront • Floral varieties subject to availability</span><a href="/admin.html">Staff access</a></div></footer>
+
+  <div class="drawer-overlay" id="drawer-overlay" hidden></div>
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Your shopping bag" aria-modal="true" aria-hidden="true">
+    <div class="drawer-header"><div><small>ALUSORA FLOWERS</small><h2>Your flower bag <span id="drawer-count">(0)</span></h2></div><button class="close-btn" id="close-cart" aria-label="Close shopping bag" type="button">×</button></div>
+    <div class="drawer-body" id="drawer-body"><div id="cart-items"></div><div id="checkout-area" hidden><div class="drawer-divider"></div><h3>Pickup details</h3><p class="form-help">Choose your pickup preferences. Order now, pay in person when you collect your flowers.</p><form id="order-form"><label>Full name <input name="name" autocomplete="name" placeholder="Your name" maxlength="100" required></label><label>Email <input name="email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="160" required></label><label>Phone <input name="phone" type="tel" autocomplete="tel" placeholder="519-555-0123" maxlength="35" required></label><div class="two-cols"><label>Pickup date <input name="pickup_date" type="date" required></label><label>Preferred time <select name="pickup_slot" required><option value="">Select</option><option>11:00 AM</option><option>1:00 PM</option><option>3:00 PM</option><option>5:00 PM</option></select></label></div><label>Message card / order notes <textarea name="notes" maxlength="500" rows="2" placeholder="Write your gift message here..."></textarea></label></form></div></div>
+    <div class="drawer-footer" id="drawer-footer" hidden><div class="total-line"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><div class="total-line"><span>HST (13%)</span><span id="tax">$0.00</span></div><div class="total-line grand"><span>Total</span><strong id="grand-total">$0.00</strong></div><div class="pay-note">No online payment required. Pay on pickup. Inventory is reserved when you place your order.</div><button type="button" class="btn btn-dark checkout-button" id="place-order">Place pickup order <span aria-hidden="true">↗</span></button><p class="form-feedback" id="order-feedback" role="status" aria-live="polite"></p></div>
+  </aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="success-dialog" class="success-dialog"><button class="close-btn" id="close-success" aria-label="Close confirmation">×</button><div class="success-icon">✿</div><p class="eyebrow mini">HOW LOVELY!</p><h2>Your flowers are<br><em>on their way.</em></h2><p>Your order has been placed and the flowers have been reserved for pickup.</p><div class="order-confirmation" id="confirmation-content"></div><p class="confirm-small">Please save your order number. Payment is made in person at pickup. This demo does not send confirmation emails.</p><button class="btn btn-dark" id="finish-success">Keep browsing <span aria-hidden="true">↗</span></button></dialog>
+</body>
+</html>
