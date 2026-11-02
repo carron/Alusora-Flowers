@@ -29,7 +29,7 @@ function addToBag(id,choice){if(!state.catalog){toast('Shop is still loading.');
  else state.cart.push(item);
  persistCart();toast('Added to your flower bag ✿');openCart();
 }
-function renderProducts(){if(!state.catalog)return;const filtered=state.catalog.products.filter(p=>state.filter==='All'||p.category===state.filter);$('#product-grid').innerHTML=filtered.map(p=>`<article class="product-card"><div class="product-image tone-${escapeHTML(p.artwork)}"><span class="tag">${escapeHTML(p.tag)}</span><img src="/assets/${escapeHTML(p.artwork)}.svg" alt="Illustrative artwork for ${escapeHTML(p.name)}" loading="lazy">${p.available<=5&&p.available>0?`<span class="stock-tag">Only ${p.available} available</span>`:''}${p.available===0?'<span class="stock-tag">Sold out</span>':''}</div><div class="product-detail"><div><h3>${escapeHTML(p.name)}</h3><p>${escapeHTML(p.subtitle)}</p></div><div class="product-price">${money(p.price)}</div></div><p class="product-description">${escapeHTML(p.description)}</p><button type="button" class="product-add" data-product="${escapeHTML(p.id)}" ${p.available===0?'disabled':''}><span>${p.available===0?'Currently sold out':'Add to bag'}</span><span aria-hidden="true">${p.available===0?'—':'↗'}</span></button></article>`).join('');
+function renderProducts(){if(!state.catalog || !$('#product-grid'))return;const filtered=state.catalog.products.filter(p=>state.filter==='All'||p.category===state.filter);$('#product-grid').innerHTML=filtered.map(p=>`<article class="product-card"><div class="product-image tone-${escapeHTML(p.artwork)}"><span class="tag">${escapeHTML(p.tag)}</span><img src="/assets/${escapeHTML(p.artwork)}.svg" alt="Illustrative artwork for ${escapeHTML(p.name)}" loading="lazy">${p.available<=5&&p.available>0?`<span class="stock-tag">Only ${p.available} available</span>`:''}${p.available===0?'<span class="stock-tag">Sold out</span>':''}</div><div class="product-detail"><div><h3>${escapeHTML(p.name)}</h3><p>${escapeHTML(p.subtitle)}</p></div><div class="product-price">${money(p.price)}</div></div><p class="product-description">${escapeHTML(p.description)}</p><button type="button" class="product-add" data-product="${escapeHTML(p.id)}" ${p.available===0?'disabled':''}><span>${p.available===0?'Currently sold out':'Add to bag'}</span><span aria-hidden="true">${p.available===0?'—':'↗'}</span></button></article>`).join('');
  $$('.product-add').forEach(btn=>btn.addEventListener('click',()=>addToBag(btn.dataset.product)));
 }
 function colorForFlower(id){return ({carnation:'#d49cad',alstro:'#edb99a',chrys:'#e7d9b7',rose:'#b66477'})[id]||'#c59e87';}
@@ -106,11 +106,11 @@ async function init(){
  $$('.pill').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;$$('.pill').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',String(b===btn));});renderProducts();}));
  $$('.palette-btn').forEach(btn=>btn.addEventListener('click',()=>{state.palette=btn.dataset.palette;$$('.palette-btn').forEach(b=>b.classList.toggle('selected',b===btn));updateBuilder();}));
  $$('[name="finish"]').forEach(r=>r.addEventListener('change',()=>{state.finish=$('[name="finish"]:checked').value;updateBuilder();}));
- $('#add-custom').addEventListener('click',()=>addToBag('custom',builderChoice()));$('#place-order').addEventListener('click',placeOrder);
+ $('#custom-request-form').addEventListener('submit',submitCustomRequest);$('#place-order').addEventListener('click',placeOrder);
  $('#event-form').addEventListener('submit',submitEvent);
  ['arrangements','quantity'].forEach(k=>$(`[name="${k}"]`,$('#event-form')).addEventListener('change',updateEventEstimate));
  $('[name="quantity"]',$('#event-form')).addEventListener('input',updateEventEstimate);
  $('#close-success').addEventListener('click',()=>$('#success-dialog').close());$('#finish-success').addEventListener('click',()=>$('#success-dialog').close());
- try{await refreshCatalog();}catch(e){$('#product-grid').innerHTML=`<p>We couldn't load our flower shop. Please refresh. ${escapeHTML(e.message)}</p>`;$('#flower-options').innerHTML='<p>Flower selections temporarily unavailable.</p>';}
+ try{await refreshCatalog();}catch(e){$('#flower-options').innerHTML=`<p class="form-feedback error">Flower selections temporarily unavailable. ${escapeHTML(e.message)}</p>`;}
 }
 document.addEventListener('DOMContentLoaded',init);
