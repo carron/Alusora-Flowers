@@ -6,6 +6,9 @@ import json
 import os
 import re
 import secrets
+import smtplib
+import ssl
+from email.message import EmailMessage
 import sqlite3
 import threading
 import time
@@ -22,6 +25,13 @@ ROOT = Path(__file__).resolve().parent
 WEB = ROOT / 'web'
 DB_PATH = Path(os.getenv('ALUSORA_DB_PATH', str(ROOT / 'alusora.sqlite3')))
 ADMIN_TOKEN = os.getenv('ALUSORA_ADMIN_TOKEN', '').strip()
+NOTIFY_TO = os.getenv('ALUSORA_NOTIFICATION_EMAIL', 'arron.cursos@gmail.com').strip()
+SMTP_HOST = os.getenv('SMTP_HOST', '').strip()
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.getenv('SMTP_USER', '').strip()
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+SMTP_FROM = os.getenv('SMTP_FROM', SMTP_USER).strip()
+SMTP_SECURITY = os.getenv('SMTP_SECURITY', 'starttls').strip().lower()
 HOST = os.getenv('HOST', '127.0.0.1')
 PORT = int(os.getenv('PORT', '8080'))
 HST_RATE = Decimal('0.13')
@@ -264,31 +274,142 @@ def create_order(body):
     finally: db.close()
 
 
+def optional_text(value, field, max_length, default=''):
+    if value is None or value == '':
+        return default
+    return safe_text(value, field, max_length, 0)
+
+
+def optional_date(value, field, latest_days=730):
+    if not value:
+        return ''
+    return safe_date(value, field, datetime.now(TZ).date(), latest_days)
+
+
+def optional_int(value, field, minimum, maximum, default):
+    if value is None or value == '':
+        return default
+    if type(value) is not int or not minimum <= value <= maximum:
+        raise ValidationError(f'{field}: choose a number between {minimum} and {maximum}.')
+    return value
+
+
 def create_quote(body):
-    if not isinstance(body,dict): raise ValidationError('Invalid quote request.')
-    entry={
-        'name':safe_text(body.get('name'),'Name',100),
-        'email':safe_email(body.get('email')),
-        'phone':safe_phone(body.get('phone')),
-        'event_type':safe_text(body.get('event_type'),'Event type',60),
-        'event_date':safe_date(body.get('event_date'),'Event date',datetime.now(TZ).date()+timedelta(days=1),730),
-        'arrangements':safe_text(body.get('arrangements'),'Arrangements',120),
-        'budget':safe_text(body.get('budget'),'Budget',50),
-        'palette':safe_text(body.get('palette'),'Colour palette',80),
-        'message':safe_text(body.get('message',''),'Additional details',1200,0),
+    """Contact request; only name and email are mandatory. No stock is reserved."""
+    if not isinstance(body, dict):
+        raise ValidationError('Invalid request.')
+    kind = optional_text(body.get('event_type'), 'Request type', 60, 'General request')
+    entry = {
+        'name': safe_text(body.get('name'), 'Name', 100),
+        'email': safe_email(body.get('email')),
+        'phone': optional_text(body.get('phone'), 'Phone', 35),
+        'event_type': kind,
+        'event_date': optional_date(body.get('event_date'), 'Event date'),
+        'arrangements': optional_text(body.get('arrangements'), 'Arrangements', 120),
+        'budget': optional_text(body.get('budget'), 'Budget', 50),
+        'palette': optional_text(body.get('palette'), 'Colour palette', 80),
+        'message': optional_text(body.get('message'), 'Additional details', 1200),
     }
-    if entry['event_type'] not in ('Birthday','Wedding','Corporate','Baby shower','Graduation','Other'):
-        raise ValidationError('Please choose a valid event type.')
-    guests=body.get('guests')
-    if type(guests) is not int or not 1<=guests<=5000: raise ValidationError('Please enter the estimated number of guests.')
-    quantity=body.get('quantity')
-    if type(quantity) is not int or not 1<=quantity<=300: raise ValidationError('Please enter between 1 and 300 floral pieces.')
-    if body.get('consent') is not True: raise ValidationError('Please confirm that we can contact you about the event.')
-    qid='EVT-'+secrets.token_hex(4).upper()
+    if entry['phone']:
+        entry['phone'] = safe_phone(entry['phone'])
+    guests = optional_int(body.get('guests'), 'Guests', 1, 5000, 0)
+    quantity = optional_int(body.get('quantity'), 'Floral pieces', 1, 300, 1)
+    qid = 'REQ-' + secrets.token_hex(4).upper()
     with connect() as db:
         db.execute('''INSERT INTO event_quotes(id,name,email,phone,event_type,event_date,guests,quantity,arrangements,budget,palette,message)
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)''',(qid,entry['name'],entry['email'],entry['phone'],entry['event_type'],entry['event_date'],guests,quantity,entry['arrangements'],entry['budget'],entry['palette'],entry['message']))
-    return {'quote_id':qid,'message':'We received your event request. Our team will review the details.'}
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', (qid,entry['name'],entry['email'],entry['phone'],entry['event_type'],entry['event_date'],guests,quantity,entry['arrangements'],entry['budget'],entry['palette'],entry['message']))
+    return {'quote_id': qid, 'message': 'Thanks for reaching out! ALUSORA will contact you to discuss your request.'}
+
+
+def create_custom_request(body):
+    """Picked by You: inquiry only; never takes payment or reserves stock."""
+    if not isinstance(body, dict):
+        raise ValidationError('Invalid request.')
+    selection = body.get('selection')
+    if selection is not None and not isinstance(selection, dict):
+        raise ValidationError('Invalid flower selection.')
+    details = json.dumps(selection or {}, ensure_ascii=False, separators=(',', ':'))
+    if len(details) > 850:
+        raise ValidationError('Flower selection is too long.')
+    message = optional_text(body.get('message'), 'Message', 300)
+    notes = ('Picked by You selection: ' + details + ('\nCustomer message: ' + message if message else ''))
+    return create_quote({
+        'name': body.get('name'), 'email': body.get('email'),
+        'phone': body.get('phone'), 'event_type': 'Picked by You',
+        'palette': body.get('palette'), 'arrangements': 'Custom bouquet',
+        'message': notes,
+    })
+
+
+def send_request_notification(route, body, result):
+    """Send an owner notification after data is committed. Failure never reverses a saved request."""
+    if not SMTP_HOST or not SMTP_FROM or not NOTIFY_TO:
+        print('Email notification not configured: set SMTP_HOST, SMTP_FROM and ALUSORA_NOTIFICATION_EMAIL.')
+        return False
+    labels = {'/api/events': 'Event / quote request',
+              '/api/custom-request': 'Picked by You request',
+              '/api/orders': 'New order'}
+    subject = f"ALUSORA | {labels.get(route, 'New request')}"
+    fields = [('Reference', result.get('quote_id') or result.get('order_id') or ''),
+              ('Type', labels.get(route, 'Request')),
+              ('Name', body.get('name', '')),
+              ('Email', body.get('email', '')),
+              ('Phone', body.get('phone', ''))]
+    if route == '/api/orders':
+        fields.extend([
+            ('Pickup date', body.get('pickup_date', '')),
+            ('Pickup time', body.get('pickup_slot', '')),
+            ('Items', body.get('items', [])),
+            ('Total CAD', f"{result.get('total_cents', 0) / 100:.2f}"),
+            ('Notes', body.get('notes', '')),
+        ])
+    elif route == '/api/custom-request':
+        fields.extend([
+            ('Flowers selected', body.get('selection', {})),
+            ('Colour preference', body.get('palette', '')),
+            ('Message', body.get('message', '')),
+        ])
+    else:
+        fields.extend([
+            ('Event type', body.get('event_type', '')),
+            ('Event date', body.get('event_date', '')),
+            ('Guests', body.get('guests', '')),
+            ('Quantity', body.get('quantity', '')),
+            ('Arrangements', body.get('arrangements', '')),
+            ('Budget', body.get('budget', '')),
+            ('Colour preference', body.get('palette', '')),
+            ('Message', body.get('message', '')),
+        ])
+    email = EmailMessage()
+    email['Subject'] = subject
+    email['From'] = SMTP_FROM
+    email['To'] = NOTIFY_TO
+    customer = body.get('email', '')
+    if isinstance(customer, str) and '\r' not in customer and '\n' not in customer and re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+', customer):
+        email['Reply-To'] = customer
+    email.set_content('New ALUSORA submission\n\n' + '\n'.join(
+        f'{k}: {json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else v}'
+        for k, v in fields if v is not None and v != ''
+    ) + '\n\nReview the request in your ALUSORA admin panel.')
+    try:
+        if SMTP_SECURITY == 'ssl':
+            with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10, context=ssl.create_default_context()) as server:
+                if SMTP_USER:
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                server.send_message(email)
+        elif SMTP_SECURITY == 'starttls':
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=10) as server:
+                server.starttls(context=ssl.create_default_context())
+                if SMTP_USER:
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                server.send_message(email)
+        else:
+            print('Email notification failed: SMTP_SECURITY must be starttls or ssl.')
+            return False
+        return True
+    except (OSError, smtplib.SMTPException) as exc:
+        print(f'Email notification failed for {result.get("quote_id") or result.get("order_id")}: {type(exc).__name__}: {exc}')
+        return False
 
 
 def admin_overview():
@@ -418,7 +539,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         route=urlparse(self.path).path
-        if route not in ('/api/orders','/api/events','/api/admin/stock','/api/admin/order-status','/api/admin/quote-status'):
+        if route not in ('/api/orders','/api/events','/api/custom-request','/api/admin/stock','/api/admin/order-status','/api/admin/quote-status'):
             return self.send_json({'error':'Not found'},404)
         if not rate_ok(self.client_address[0]): return self.send_json({'error':'Too many requests. Try again in a minute.'},429)
         if route.startswith('/api/admin/') and not self.admin_auth(): return
@@ -426,10 +547,14 @@ class Handler(BaseHTTPRequestHandler):
             data=self.read_body()
             if route=='/api/orders': output=create_order(data)
             elif route=='/api/events': output=create_quote(data)
+            elif route=='/api/custom-request': output=create_custom_request(data)
             elif route=='/api/admin/stock': output=adjust_stock(data)
             elif route=='/api/admin/order-status': output=order_status(data)
             else: output=quote_status(data)
-            self.send_json(output,201 if route in ('/api/orders','/api/events') else 200)
+            if route in ('/api/orders', '/api/events', '/api/custom-request'):
+                # The request is saved even when SMTP is unavailable.
+                output['notification_sent'] = send_request_notification(route, data, output)
+            self.send_json(output,201 if route in ('/api/orders','/api/events','/api/custom-request') else 200)
         except ValidationError as exc: self.send_json({'error':str(exc)},400)
         except StockError as exc: self.send_json({'error':str(exc),'current_stock':exc.available},409)
         except sqlite3.OperationalError as exc:
