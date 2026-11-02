@@ -331,12 +331,14 @@ def create_custom_request(body):
     details = json.dumps(selection or {}, ensure_ascii=False, separators=(',', ':'))
     if len(details) > 850:
         raise ValidationError('Flower selection is too long.')
+    delivery_date = safe_date(body.get('delivery_date'), 'Delivery date', datetime.now(TZ).date()+timedelta(days=1), 400)
+    phone = safe_phone(body.get('phone'))
     message = optional_text(body.get('message'), 'Message', 300)
     notes = ('Picked by You selection: ' + details + ('\nCustomer message: ' + message if message else ''))
     return create_quote({
         'name': body.get('name'), 'email': body.get('email'),
-        'phone': body.get('phone'), 'event_type': 'Picked by You',
-        'palette': body.get('palette'), 'arrangements': 'Custom bouquet',
+        'phone': phone, 'event_type': 'Picked by You',
+        'event_date': delivery_date, 'palette': body.get('palette'), 'arrangements': 'Custom bouquet',
         'message': notes,
     })
 
@@ -365,6 +367,7 @@ def send_request_notification(route, body, result):
         ])
     elif route == '/api/custom-request':
         fields.extend([
+            ('Requested delivery date', body.get('delivery_date', '')),
             ('Flowers selected', body.get('selection', {})),
             ('Colour preference', body.get('palette', '')),
             ('Message', body.get('message', '')),
