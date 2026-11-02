@@ -295,23 +295,21 @@ def optional_int(value, field, minimum, maximum, default):
 
 
 def create_quote(body):
-    """Contact request; only name and email are mandatory. No stock is reserved."""
+    """Contact request; name, email, phone and date are mandatory. No stock is reserved."""
     if not isinstance(body, dict):
         raise ValidationError('Invalid request.')
     kind = optional_text(body.get('event_type'), 'Request type', 60, 'General request')
     entry = {
         'name': safe_text(body.get('name'), 'Name', 100),
         'email': safe_email(body.get('email')),
-        'phone': optional_text(body.get('phone'), 'Phone', 35),
+        'phone': safe_phone(body.get('phone')),
         'event_type': kind,
-        'event_date': optional_date(body.get('event_date'), 'Event date'),
+        'event_date': safe_date(body.get('event_date'), 'Event date'),
         'arrangements': optional_text(body.get('arrangements'), 'Arrangements', 120),
         'budget': optional_text(body.get('budget'), 'Budget', 50),
         'palette': optional_text(body.get('palette'), 'Colour palette', 80),
         'message': optional_text(body.get('message'), 'Additional details', 1200),
     }
-    if entry['phone']:
-        entry['phone'] = safe_phone(entry['phone'])
     guests = optional_int(body.get('guests'), 'Guests', 1, 5000, 0)
     quantity = optional_int(body.get('quantity'), 'Floral pieces', 1, 300, 1)
     qid = 'REQ-' + secrets.token_hex(4).upper()
@@ -326,19 +324,23 @@ def create_custom_request(body):
     if not isinstance(body, dict):
         raise ValidationError('Invalid request.')
     selection = body.get('selection')
-    if selection is not None and not isinstance(selection, dict):
-        raise ValidationError('Invalid flower selection.')
+    if not isinstance(selection, dict):
+        raise ValidationError('Please select your flowers.')
+    choice = custom_bouquet(selection)
+    with connect() as db:
+        stock = stock_map(db)
+    if recipe_available(choice['recipe'], stock) < 1:
+        raise ValidationError('Some of your selected flowers are unavailable. Please update your bouquet.')
     details = json.dumps(selection or {}, ensure_ascii=False, separators=(',', ':'))
     if len(details) > 850:
         raise ValidationError('Flower selection is too long.')
-    delivery_date = safe_date(body.get('delivery_date'), 'Delivery date', datetime.now(TZ).date()+timedelta(days=1), 400)
-    phone = safe_phone(body.get('phone'))
+    delivery_date = safe_date(body.get('delivery_date'), 'Delivery date', datetime.now(TZ).date() + timedelta(days=1), 730)
     message = optional_text(body.get('message'), 'Message', 300)
     notes = ('Picked by You selection: ' + details + ('\nCustomer message: ' + message if message else ''))
     return create_quote({
         'name': body.get('name'), 'email': body.get('email'),
-        'phone': phone, 'event_type': 'Picked by You',
-        'event_date': delivery_date, 'palette': body.get('palette'), 'arrangements': 'Custom bouquet',
+        'phone': body.get('phone'), 'event_date': delivery_date, 'event_type': 'Picked by You',
+        'palette': body.get('palette'), 'arrangements': 'Custom bouquet',
         'message': notes,
     })
 
@@ -367,7 +369,7 @@ def send_request_notification(route, body, result):
         ])
     elif route == '/api/custom-request':
         fields.extend([
-            ('Requested delivery date', body.get('delivery_date', '')),
+            ('Delivery date', body.get('delivery_date', '')),
             ('Flowers selected', body.get('selection', {})),
             ('Colour preference', body.get('palette', '')),
             ('Message', body.get('message', '')),
