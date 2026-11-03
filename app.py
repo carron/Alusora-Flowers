@@ -12,6 +12,7 @@ from email.message import EmailMessage
 import sqlite3
 import threading
 import time
+import traceback
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal, ROUND_HALF_UP
@@ -567,6 +568,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({'error':'Database is busy. Please retry.'},503)
         except Exception as exc:
             print('Server error:',repr(exc))
+            traceback.print_exc()
             self.send_json({'error':'Unexpected server error.'},500)
 
     def log_message(self, fmt, *args):

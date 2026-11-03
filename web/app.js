@@ -58,7 +58,27 @@ function renderCart(){const count=state.cart.reduce((s,it)=>s+it.qty,0);$('#cart
 function changeCart(i,action){const it=state.cart[i];if(!it)return;if(action==='remove')state.cart.splice(i,1);else if(action==='decrease'){if(--it.qty<=0)state.cart.splice(i,1);}else if(action==='increase'){if(it.qty>=12||!remainingCartStock({...it,qty:1})){toast('That quantity exceeds available stock.');return;}it.qty++;}persistCart();updateBuilder();}
 function openCart(){const el=$('#cart-drawer');$('#drawer-overlay').hidden=false;el.classList.add('open');el.setAttribute('aria-hidden','false');document.body.classList.add('drawer-open');$('#close-cart').focus();}
 function closeCart(){const el=$('#cart-drawer');el.classList.remove('open');el.setAttribute('aria-hidden','true');$('#drawer-overlay').hidden=true;document.body.classList.remove('drawer-open');}
-async function api(url, options={}){let response;try{response=await fetch(url,{headers:{'Content-Type':'application/json'},...options});}catch{throw new Error('Unable to connect. Please try again.');}let data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Something went wrong.');return data;}
+async function api(url, options={}){
+ let response;
+ try{response=await fetch(url,{headers:{'Content-Type':'application/json','Accept':'application/json'},cache:'no-store',...options});}
+ catch{throw new Error('Unable to reach the ALUSORA server. Check your connection or hosting configuration.');}
+ const contentType=response.headers.get('content-type')||'';
+ let data=null;
+ if(contentType.includes('application/json')){
+   try{data=await response.json();}catch{throw new Error(`The server returned an invalid response (HTTP ${response.status}). Please contact ALUSORA.`);}
+ }else{
+   // An HTML 404/500 often means the site is hosted without the Python API.
+   if(response.status===404||response.status===405)throw new Error(`Request service unavailable (HTTP ${response.status}). The website is not routing ${url} to the Python backend. Please check the deployment.`);
+   if(response.status>=500)throw new Error(`The hosting server returned an error (HTTP ${response.status}). Please review the application logs.`);
+   throw new Error(`Unexpected server response (HTTP ${response.status}). The request could not be confirmed.`);
+ }
+ if(!response.ok){
+   const detail=typeof data?.error==='string'&&data.error.trim()?data.error.trim():`Request failed (HTTP ${response.status}).`;
+   throw new Error(detail);
+ }
+ if(!data||typeof data!=='object')throw new Error('The server response could not be verified.');
+ return data;
+}
 async function refreshCatalog(){state.catalog=await api('/api/catalog');renderProducts();renderFlowers();renderCart();}
 async function placeOrder(){const form=$('#order-form');const feedback=$('#order-feedback');feedback.textContent='';feedback.classList.remove('error');if(!state.cart.length)return;if(!form.reportValidity())return;
  const values=Object.fromEntries(new FormData(form).entries());const body={...values,items:state.cart.map(it=>({id:it.id,qty:it.qty,...(it.id==='custom'?{choice:it.choice}:{})})),idempotency_key:state.requestKey||tokenId()};state.requestKey=body.idempotency_key;
@@ -77,8 +97,8 @@ async function submitCustomRequest(ev){
   const btn=$('#send-custom-request');btn.disabled=true;btn.textContent='Sending your request...';
   try{
     const result=await api('/api/custom-request',{method:'POST',body:JSON.stringify(body)});
-    if(result.notification_sent){feedback.textContent='Thank you! Your request has been sent successfully. Someone from ALUSORA will be in touch with you soon.';form.reset();}
-    else{feedback.textContent=`Your request was saved (reference ${result.quote_id}), but the email notification could not be sent. Please contact ALUSORA directly.`;feedback.classList.add('error');}
+    if(result.notification_sent===true){feedback.textContent='Thank you! Your request has been sent successfully. Someone from ALUSORA will be in touch with you soon.';form.reset();}
+    else{feedback.textContent=result.quote_id?`Your request was saved (reference ${result.quote_id}), but the email notification could not be sent. Please contact ALUSORA directly.`:'The server did not confirm email delivery. Please contact ALUSORA directly.';feedback.classList.add('error');}
   }catch(e){feedback.textContent=e.message;feedback.classList.add('error');}
   finally{btn.innerHTML='Send my request <span aria-hidden="true">↗</span>';updateBuilder();}
 }
@@ -92,7 +112,7 @@ function updateEventEstimate(){
 }
 async function submitEvent(ev){ev.preventDefault();const form=ev.currentTarget;if(!form.reportValidity())return;const feedback=$('#event-feedback');feedback.textContent='';feedback.classList.remove('error');const fields=Object.fromEntries(new FormData(form).entries());if(fields.guests)fields.guests=Number(fields.guests);else delete fields.guests;if(fields.quantity)fields.quantity=Number(fields.quantity);else delete fields.quantity;fields.consent=$('[name="consent"]',form).checked;
  const btn=$('[type="submit"]',form);btn.disabled=true;btn.textContent='Sending your request...';
- try{const result=await api('/api/events',{method:'POST',body:JSON.stringify(fields)});if(result.notification_sent){feedback.textContent='Thank you! Your request has been sent successfully. Someone from ALUSORA will be in touch with you soon.';form.reset();updateEventEstimate();}else{feedback.textContent=`Your request was saved (reference ${result.quote_id}), but the email notification could not be sent. Please contact ALUSORA directly.`;feedback.classList.add('error');}}
+ try{const result=await api('/api/events',{method:'POST',body:JSON.stringify(fields)});if(result.notification_sent===true){feedback.textContent='Thank you! Your request has been sent successfully. Someone from ALUSORA will be in touch with you soon.';form.reset();updateEventEstimate();}else{feedback.textContent=result.quote_id?`Your request was saved (reference ${result.quote_id}), but the email notification could not be sent. Please contact ALUSORA directly.`:'The server did not confirm email delivery. Please contact ALUSORA directly.';feedback.classList.add('error');}}
  catch(e){feedback.textContent=e.message;feedback.classList.add('error');}
  finally{btn.disabled=false;btn.innerHTML='Send my request <span aria-hidden="true">↗</span>';}
 }
