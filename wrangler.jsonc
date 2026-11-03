@@ -1,0 +1,9 @@
+{
+ "$schema":"./node_modules/wrangler/config-schema.json",
+ "name":"alusora-flowers",
+ "main":"src/worker.js",
+ "compatibility_date":"2026-11-03",
+ "assets":{"directory":"./web","binding":"ASSETS","run_worker_first":["/api/*"]},
+ "d1_databases":[{"binding":"DB","database_name":"alusora-flowers-db","database_id":"REPLACE_WITH_D1_DATABASE_ID","migrations_dir":"migrations"}],
+ "vars":{"ALUSORA_NOTIFICATION_EMAIL":"arron.cursos@gmail.com"}
+}

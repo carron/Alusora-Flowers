@@ -1,0 +1,22 @@
+-- D1 schema. Demo stock quantities; confirm real inventory before orders.
+CREATE TABLE IF NOT EXISTS inventory (sku TEXT PRIMARY KEY, name TEXT NOT NULL, on_hand INTEGER NOT NULL CHECK(on_hand >= 0), unit TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS event_quotes (id TEXT PRIMARY KEY, idempotency_key TEXT UNIQUE, payload_hash TEXT NOT NULL, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL, event_type TEXT NOT NULL DEFAULT '', event_date TEXT NOT NULL, guests INTEGER, quantity INTEGER, arrangements TEXT NOT NULL DEFAULT '', budget TEXT NOT NULL DEFAULT '', palette TEXT NOT NULL DEFAULT '', message TEXT NOT NULL DEFAULT '', consent INTEGER NOT NULL DEFAULT 0, notification_sent INTEGER NOT NULL DEFAULT 0, notification_id TEXT, status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS custom_requests (id TEXT PRIMARY KEY, idempotency_key TEXT UNIQUE, payload_hash TEXT NOT NULL, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL, delivery_date TEXT NOT NULL, selection_json TEXT NOT NULL, palette TEXT NOT NULL, finish TEXT NOT NULL, estimated_price_cents INTEGER NOT NULL, message TEXT NOT NULL DEFAULT '', notification_sent INTEGER NOT NULL DEFAULT 0, notification_id TEXT, status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, idempotency_key TEXT NOT NULL UNIQUE, customer_name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL, pickup_date TEXT NOT NULL, pickup_slot TEXT NOT NULL, notes TEXT NOT NULL DEFAULT '', subtotal_cents INTEGER NOT NULL, tax_cents INTEGER NOT NULL, total_cents INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'confirmed', notification_sent INTEGER NOT NULL DEFAULT 0, notification_id TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS order_items (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id TEXT NOT NULL REFERENCES orders(id), label TEXT NOT NULL, quantity INTEGER NOT NULL, unit_price_cents INTEGER NOT NULL, recipe_json TEXT NOT NULL, options_json TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS inventory_audit (id INTEGER PRIMARY KEY AUTOINCREMENT, sku TEXT NOT NULL, change_qty INTEGER NOT NULL, reason TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX IF NOT EXISTS idx_event_created ON event_quotes(created_at);
+CREATE INDEX IF NOT EXISTS idx_custom_created ON custom_requests(created_at);
+CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at);
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('carnation','Carnations / Claveles',180,'stem');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('alstro','Alstroemeria',110,'stem');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('chrys','Chrysanthemums / Crisantemos',75,'stem');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('rose','Roses / Rosas',52,'stem');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('foliage','Greenery / Follaje',90,'bunch');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('pine','Winter greens / Pino',65,'sprig');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('wrap','Gift wrapping / Envoltura',100,'unit');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('ribbon','Ribbon / Listón',120,'unit');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('card','Message card / Tarjeta',120,'unit');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('vase','Small vase / Florero',24,'unit');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('pinecone','Pine cones / Piñas',45,'unit');
+INSERT OR IGNORE INTO inventory(sku,name,on_hand,unit) VALUES('poinsettia','Potted poinsettia',18,'plant');
