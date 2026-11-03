@@ -24,9 +24,10 @@
 			"remote": true
 		}
 	],
-	"vars": {
-		"CONTACT_EMAIL": "alicia.arron@gmail.com",
-		"FROM_EMAIL": "ALUSORA Flowers <alicia.arron@gmail.com>",
-		"TURNSTILE_SITE_KEY": ""
+  "vars": {
+    "alusora-flowers-db": "01656796-9813-46fb-b638-fe2ed43438aa",
+    "CONTACT_EMAIL": "alicia.arron@gmail.com",
+    "FROM_EMAIL": "ALUSORA Flowers <alicia.arron@gmail.com>",
+    "TURNSTILE_SITE_KEY": ""
 	}
 }
