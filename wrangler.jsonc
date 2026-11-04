@@ -26,8 +26,8 @@
 	],
   "vars": {
     "alusora-flowers-db": "01656796-9813-46fb-b638-fe2ed43438aa",
-    "CONTACT_EMAIL": "alicia.arron@gmail.com",
-    "FROM_EMAIL": "ALUSORA Flowers <alicia.arron@gmail.com>",
+    "CONTACT_EMAIL": "alusoraflowers@gmail.com",
+  	"FROM_EMAIL": "ALUSORA Flowers <hello@alusoraflowers.com>",
     "TURNSTILE_SITE_KEY": ""
 	}
 }
