@@ -2,7 +2,7 @@
 
 **Nueva versión en inglés, enfocada en decoración con globos para eventos en London, Ontario.**
 
-La marca sigue siendo **ALUSORA Flowers**; la nueva portada prioriza **balloon décor**, arcos, guirnaldas orgánicas, photo backdrops y eventos. La sección **Picked by You** de flores se conserva como servicio secundario, con el inventario de D1 y panel administrativo ya existentes.
+La marca sigue siendo **ALUSORA Flowers**; la nueva portada prioriza **balloon décor**, arcos, guirnaldas orgánicas, photo backdrops y eventos. La sección pública **Picked by You** de flores fue retirada por completo para mantener el enfoque en globos.
 
 ## Qué incluye
 
@@ -12,7 +12,7 @@ La marca sigue siendo **ALUSORA Flowers**; la nueva portada prioriza **balloon d
 - Formularios funcionando con el endpoint existente `/api/request-event`: nombre, correo, teléfono opcional, fecha, invitados, local o zona, interior/exterior, rango de presupuesto, colores y comentarios.
 - Las solicitudes **siguen llegando a `CONTACT_EMAIL` mediante el secreto `RESEND_API_KEY`**, que debes tener ya configurado en Cloudflare. La plantilla incluida apunta a `alusoraflowers@gmail.com`.
 - El formulario desaparece al confirmar que la API de Resend **aceptó** el envío y muestra un mensaje de agradecimiento. Esto no garantiza la recepción final en Gmail: revisa el estado en Resend.
-- Se conservan **Picked by You, `admin.html`, el inventario de flores, las solicitudes y D1**.
+- Se retira **Picked by You** de la página principal, incluido su formulario. Se conservan **`admin.html`, el inventario histórico de flores, las solicitudes y D1** para no afectar instalaciones existentes.
 - Metadatos SEO ajustados a balloon décor en London, ON, y archivos `sitemap.xml` y `robots.txt`.
 
 ## Decisión deliberada sobre precios
@@ -50,14 +50,15 @@ La marca sigue siendo **ALUSORA Flowers**; la nueva portada prioriza **balloon d
 
 ## Archivos modificados para la actualización
 
-- `public/index.html` — texto, catálogo, formulario y SEO.
+- `public/index.html` — catálogo y formulario de globos; elimina por completo la sección y enlaces “Picked by You”.
+- `public/app.js` — elimina la lógica del configurador floral y conserva la solicitud de cotizaciones y Turnstile.
 - `public/style.css` — nueva paleta, estilos de tarjetas, hero y formularios.
 - `public/assets/hero-balloons.svg`, `little-pop.svg`, `organic-garland.svg`, `balloon-arch.svg`, `statement-backdrop.svg`, `balloon-and-bloom.svg`, `corporate-decor.svg` — gráficos originales.
 - `src/index.js` — seis nuevos identificadores de paquetes, manejo de cotización sin precio, campos de presupuesto/venue en la notificación.
 - `public/sitemap.xml`, `public/robots.txt` — SEO técnico.
 - `tests/` — pruebas unitarias y de envío simulado.
 
-**La sección `Picked by You` usa el inventario de flores original.** El panel administrativo no incluye inventario ni precios por globo: los servicios de globos se ofrecen mediante solicitud de cotización. Si más adelante deseas vender globos por unidad con inventario, se necesitará otro desarrollo.
+**Picked by You ya no se muestra a los clientes**, y el JavaScript público ya no solicita el inventario ni depende del formulario de flores. El panel administrativo y la API anterior de bouquets se mantienen por compatibilidad, pero no hay enlaces públicos hacia ella. Los servicios de globos funcionan por cotización; para inventario de globos se requeriría otro desarrollo.
 
 ## Datos por comprobar antes de publicar
 
@@ -69,3 +70,7 @@ La marca sigue siendo **ALUSORA Flowers**; la nueva portada prioriza **balloon d
 ## Pruebas
 
 Ejecuta `npm test` en Node.js. Incluye una prueba que envía una solicitud ficticia a una instancia simulada de Resend (sin usar tu API Key real), comprueba el destinatario y el correo de detalles y verifica que no se inventa un precio fijo.
+
+## Ajuste de esta entrega
+
+La sección **“Picked by you. Finished with flowers.”**, su formulario, el enlace “Fresh flowers” de la navegación y el enlace “Picked by you” del pie de página fueron retirados. Se mantiene “Balloon & Bloom” como una opción de decoración con globos y acentos florales. No debes modificar tu `wrangler.jsonc` ni realizar migraciones D1 para este cambio.

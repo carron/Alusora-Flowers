@@ -1,0 +1,9 @@
+ALUSORA BALLOONS — IMAGENES ORIGINALES GENERADAS POR IA
+
+1. Haz una copia de seguridad de tu proyecto Cloudflare.
+2. Copia el contenido de la carpeta public dentro de la carpeta public de tu proyecto actual, aceptando reemplazar SOLO index.html y style.css.
+3. No reemplaces wrangler.jsonc, src/, D1, RESEND_API_KEY, ni otros secretos.
+4. Publica con npm run deploy, o haz commit/push si Cloudflare esta conectado a GitHub.
+5. Revisa https://alusoraflowers.com/ y fuerza actualizacion Ctrl + Shift + R.
+
+Son imagenes originales generadas por IA. Son conceptos visuales, NO fotos de instalaciones realizadas.
