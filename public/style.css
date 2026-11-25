@@ -153,3 +153,7 @@ body{background:var(--cream)}
     padding: 6px 8px;
   }
 }
+
+/* One-line ALUSORA wordmark; no subtitle below the brand. */
+.brand{line-height:1}
+.brand>span:last-child{gap:0}

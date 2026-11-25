@@ -22,7 +22,7 @@ test('balloon quote request reaches Resend and retains event details without inv
       body:JSON.stringify({name:'Test Guest',email:'guest@example.com',phone:'519-555-0000',eventDate:date,
         packageId:'organic-garland',venue:'London community hall',venueType:'Indoor',budget:'$500–$1,000 CAD',
         guests:48,palette:'sage and cream',notes:'Backdrop for birthday',website:''})});
-    const response=await worker.fetch(request,{DB,RESEND_API_KEY:'test-not-real',CONTACT_EMAIL:'alusoraflowers@gmail.com',FROM_EMAIL:'ALUSORA Flowers <hello@alusoraflowers.com>'});
+    const response=await worker.fetch(request,{DB,RESEND_API_KEY:'test-not-real',CONTACT_EMAIL:'alusoraflowers@gmail.com',FROM_EMAIL:'ALUSORA <hello@alusoraflowers.com>'});
     assert.equal(response.status,200,await response.text());
     assert.deepEqual(sent.to,['alusoraflowers@gmail.com']);
     assert.match(sent.html,/Organic Garland/);

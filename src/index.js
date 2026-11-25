@@ -1,4 +1,4 @@
-// ALUSORA Flowers + balloon events | Cloudflare Worker + D1 + Resend.
+// ALUSORA + balloon events | Cloudflare Worker + D1 + Resend.
 // No customer request is marked successful unless Resend accepts the email.
 const PACKAGES = Object.freeze({
   'little-pop': {name:'Little Pop',price:null,type:'Small celebrations'},

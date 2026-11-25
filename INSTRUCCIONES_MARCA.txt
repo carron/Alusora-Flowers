@@ -1,0 +1,12 @@
+ALUSORA — actualización de marca para sitio existente (Cloudflare Workers)
+
+1) Haz una copia de seguridad de tu proyecto publicado.
+2) Descomprime este ZIP en la carpeta raíz del proyecto y reemplaza los archivos indicados (public/, src/, tests/).
+3) NO reemplaces wrangler.jsonc, ni cambies la conexión DB, ni secretos ni dominio.
+4) En terminal, dentro del proyecto: npm test  y  npm run deploy.
+5) Si Cloudflare usa GitHub, haz commit/push de estos archivos a la rama de producción.
+6) Opcional pero recomendado: Cloudflare Workers & Pages > alusora-flowers > Settings > Variables and secrets > FROM_EMAIL: cambia sólo el nombre mostrado a  ALUSORA <hello@alusoraflowers.com>  (no cambies la dirección).
+7) Si Google Business Profile sigue con el nombre anterior, actualízalo solo cuando ALUSORA sea el nombre real que cumple las reglas de Google.
+
+Qué cambió: marca visible ALUSORA sin FLOWERS ni EVENTS bajo el logo, SEO, panel staff, textos de correos y pie de página.
+No cambió: dirección alusoraflowers.com, contacto alusoraflowers@gmail.com, imágenes, paquetes, formulario, D1 y Resend.

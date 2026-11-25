@@ -68,7 +68,7 @@
         if(r.items?.length)parts.push('Stems: '+r.items.map(x=>`${x.quantity} x ${x.color} ${x.flower}`).join('; '));
         if(r.notes)parts.push(`Notes: ${r.notes}`);
         const pre=mk('pre',parts.join('\n'));article.append(pre);
-        const mail=mk('a','Reply by email ↗');mail.href=`mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent('Your ALUSORA Flowers enquiry')}`;mail.style.color='#74374e';
+        const mail=mk('a','Reply by email ↗');mail.href=`mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent('Your ALUSORA enquiry')}`;mail.style.color='#74374e';
         article.append(mail);root.append(article);
       }
     }catch(e){root.textContent=e.message;}
