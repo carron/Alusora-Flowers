@@ -1,0 +1,35 @@
+ALUSORA — DOS NUEVOS DISEÑOS DE COLUMNAS Y ARCO DE POSADA SIN PIÑATA
+
+CAMBIOS:
+• Small celebrations: Balloon Columns (nuevo paquete + imagen IA).
+• Special dates · Christmas: Holiday Balloon Columns (nuevo paquete + imagen IA).
+• El filtro “Special dates · Christmas” ahora está entre “All designs” y “Small celebrations”.
+• 12 diseños totales / 5 navideños.
+• Christmas Posada Arch usa una nueva imagen sin piñata colgante.
+• Imágenes WEBP cuadradas: foto completa con fondo lateral suave, sin recortes; CSS usa object-fit: contain.
+• Ambos diseños están incluidos en el selector de cotización y admitidos por el backend de Cloudflare.
+
+ACTUALIZACIÓN SEGURA (desde el ZIP ACTUALIZACION):
+1. Respaldar el proyecto actual.
+2. Copiar los archivos manteniendo sus rutas, reemplazando los existentes:
+   public/index.html
+   public/style.css
+   src/index.js
+   tests/worker.test.js
+   tests/seasonal-christmas.test.js
+   tests/balloon-columns.test.js
+   public/assets/small-balloon-columns.webp
+   public/assets/christmas-balloon-columns.webp
+   public/assets/christmas-posada.webp
+3. NO modificar ni sobrescribir wrangler.jsonc, base D1, secrets de Resend, claves ni dominio.
+4. Abrir CMD desde la carpeta que contiene package.json, ejecutar:
+      npm test
+      npm run deploy
+   Si despliegas vía GitHub, también envía los cambios al repositorio configurado.
+5. Probar los filtros Small celebrations y Special dates, seleccionar nuevos paquetes y enviar un formulario de prueba.
+6. Refrescar navegador con Ctrl+Shift+R; verificar fotografías enteras tanto en móvil como escritorio.
+
+ATENCIÓN:
+Las fotos son conceptos originales generados con IA y NO fotografías de trabajos reales realizados.
+Los precios se cotizan individualmente: la solicitud no es una contratación confirmada.
+El ZIP PROYECTO COMPLETO incluye wrangler.jsonc de referencia, NO reemplaces el de producción.

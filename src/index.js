@@ -2,6 +2,7 @@
 // No customer request is marked successful unless Resend accepts the email.
 const PACKAGES = Object.freeze({
   'little-pop': {name:'Little Pop',price:null,type:'Small celebrations'},
+  'balloon-columns': {name:'Balloon Columns',price:null,type:'Small celebrations'},
   'organic-garland': {name:'Organic Garland',price:null,type:'Garlands & backdrops'},
   'party-arch': {name:'Celebration Arch',price:null,type:'Arches & entrances'},
   'statement-backdrop': {name:'The Statement Moment',price:null,type:'Milestone celebrations'},
@@ -10,7 +11,8 @@ const PACKAGES = Object.freeze({
   'christmas-posada': {name:'Christmas Posada Arch',price:null,type:'Special dates · Christmas posadas'},
   'holiday-photo-corner': {name:'Holiday Photo Corner',price:null,type:'Special dates · Christmas photo corner'},
   'holiday-corporate': {name:'Corporate Holiday Glow',price:null,type:'Special dates · Business holiday events'},
-  'winter-wonderland': {name:'Winter Wonderland',price:null,type:'Special dates · Winter parties'}
+  'winter-wonderland': {name:'Winter Wonderland',price:null,type:'Special dates · Winter parties'},
+  'holiday-balloon-columns': {name:'Holiday Balloon Columns',price:null,type:'Special dates · Christmas and posadas'}
 });
 
 const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };

@@ -7,12 +7,12 @@ const css=fs.readFileSync(new URL('../public/style.css', import.meta.url), 'utf8
 const js=fs.readFileSync(new URL('../public/app.js', import.meta.url), 'utf8');
 const asset=name=>new URL('../public/assets/'+name, import.meta.url);
 
-test('Special dates filter and four Christmas designs are present', () => {
+test('Special dates filter and five Christmas designs are present', () => {
   assert.match(html,/data-filter="seasonal"/);
-  assert.match(html,/All designs <span>10<\/span>/);
+  assert.match(html,/All designs <span>12<\/span>/);
   assert.match(html,/SPECIAL DATES · CHRISTMAS EDITION/);
   assert.match(js,/seasonalIntro.hidden/);
-  for(const id of ['christmas-posada','holiday-photo-corner','holiday-corporate','winter-wonderland']) {
+  for(const id of ['christmas-posada','holiday-photo-corner','holiday-corporate','winter-wonderland','holiday-balloon-columns']) {
     assert.ok(PACKAGES[id],`${id} must be accepted by Cloudflare Worker`);
     assert.equal(PACKAGES[id].price,null);
     assert.match(html,new RegExp('data-package="'+id+'"'));
@@ -21,7 +21,7 @@ test('Special dates filter and four Christmas designs are present', () => {
 });
 
 test('Seasonal pictures are original local WEBP assets and CSS fits without crop', () => {
-  for(const name of ['christmas-posada.webp','christmas-photo-corner.webp','holiday-corporate.webp','winter-wonderland.webp']) {
+  for(const name of ['christmas-posada.webp','christmas-photo-corner.webp','holiday-corporate.webp','winter-wonderland.webp','christmas-balloon-columns.webp']) {
     assert.ok(fs.statSync(asset(name)).size>10000);
     assert.match(html,new RegExp('/assets/'+name.replace('.','\\.')));
   }

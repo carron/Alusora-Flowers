@@ -179,3 +179,15 @@ body{background:var(--cream)}
 .seasonal-card .features span{background:#f6f2e9;color:#5b6754}
 @media(max-width:800px){.seasonal-break{gap:14px;flex-wrap:wrap;padding:23px}.seasonal-break-mark{width:48px;height:48px;font-size:26px}.seasonal-link{width:100%;padding-left:63px}}
 @media(max-width:430px){.seasonal-break-mark{display:none}.seasonal-link{padding-left:0}.seasonal-break{padding:19px}}
+
+/* New balloon-column catalog photography: full picture visible on desktop and mobile. */
+.balloon-column-card .card-art > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center center;
+  transform: none;
+}
+.balloon-column-card:hover .card-art > img { transform: none; }
