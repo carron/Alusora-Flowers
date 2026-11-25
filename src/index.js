@@ -1,12 +1,12 @@
-// ALUSORA Flowers | Cloudflare Worker + D1 + Resend.
+// ALUSORA Flowers + balloon events | Cloudflare Worker + D1 + Resend.
 // No customer request is marked successful unless Resend accepts the email.
 const PACKAGES = Object.freeze({
-  'little-celebration': { name: 'Little Celebration', price: 28900, type: 'Birthday & occasions' },
-  'birthday-garden': { name: 'Birthday Garden', price: 64900, type: 'Birthday & occasions' },
-  'birthday-statement': { name: 'Birthday Statement', price: 169000, type: 'Birthday & occasions' },
-  'gentle-tribute': { name: 'A Gentle Tribute', price: 24900, type: 'Memorial & sympathy' },
-  'sacred-harmony': { name: 'Sacred Harmony', price: 28900, type: 'Church & faith' },
-  'sacred-celebration': { name: 'Sacred Celebration', price: 54900, type: 'Church & faith' }
+  'little-pop': {name:'Little Pop',price:null,type:'Small celebrations'},
+  'organic-garland': {name:'Organic Garland',price:null,type:'Garlands & backdrops'},
+  'party-arch': {name:'Celebration Arch',price:null,type:'Arches & entrances'},
+  'statement-backdrop': {name:'The Statement Moment',price:null,type:'Milestone celebrations'},
+  'balloon-bloom': {name:'Balloon & Bloom',price:null,type:'Balloons + flowers'},
+  'corporate-pop': {name:'Corporate Pop',price:null,type:'Business events'}
 });
 
 const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
@@ -97,19 +97,21 @@ async function handleEvent(request,env){
   if(text(body.website,100)) return json({ok:true}); // honeypot, intentionally not submitted
   await verifyTurnstile(body,request,env);
   const info=contact(body), packageId=text(body.packageId,80), pkg=PACKAGES[packageId];
-  if(!pkg) return err('Please select a floral package.');
+  if(!pkg) return err('Please select a balloon design.');
+  const venue=text(body.venue,160),venueType=text(body.venueType,60),budget=text(body.budget,60);
   const guests=body.guests===''||body.guests==null?null:Number(body.guests);
   if(guests!=null && (!Number.isInteger(guests)||guests<1||guests>5000)) return err('Please enter a valid guest count.');
   if(!env.RESEND_API_KEY) return err('Email delivery is not configured yet.',503);
+  const additional=[venue&&`Venue/area: ${venue}`,venueType&&`Space: ${venueType}`,budget&&`Budget: ${budget}`,info.notes&&`Client notes: ${info.notes}`].filter(Boolean).join('\n').slice(0,900);
   const id=crypto.randomUUID();
   await env.DB.prepare(`INSERT INTO requests(id,type,package_id,package_name,name,email,phone,event_date,guests,palette,notes,subtotal_cents,status) VALUES(?,'event',?,?,?,?,?,?,?,?,?,?,'pending_email')`)
-    .bind(id,packageId,pkg.name,info.name,info.email,info.phone,info.eventDate,guests,info.palette,info.notes,pkg.price).run();
+    .bind(id,packageId,pkg.name,info.name,info.email,info.phone,info.eventDate,guests,info.palette,additional,pkg.price).run();
   try{
     await sendEmail(env,`New event enquiry — ${pkg.name} — ${info.eventDate}`,
-      mailTemplate(id,'New floral event enquiry',[
-        ['Package',pkg.name],['Starting price',`CAD $${(pkg.price/100).toFixed(2)} + applicable tax`],['Occasion',pkg.type],
+      mailTemplate(id,'New balloon styling enquiry',[
+        ['Package',pkg.name],['Pricing','Custom quote will be prepared after consultation'],['Service type',pkg.type],
         ['Name',info.name],['Email',info.email],['Phone',info.phone||'—'],['Event date',info.eventDate],['Guests',guests??'—'],
-        ['Colour preferences',info.palette||'—'],['Notes',info.notes||'—']]),info.email);
+        ['Colour preferences',info.palette||'—'],['Venue/area',venue||'—'],['Space type',venueType||'—'],['Estimated décor budget',budget||'—'],['Notes',info.notes||'—']]),info.email);
     // The email API has already accepted this request. A status-update error must not
     // falsely tell the customer that the email failed.
     try { await env.DB.prepare("UPDATE requests SET status='new' WHERE id=?").bind(id).run(); }

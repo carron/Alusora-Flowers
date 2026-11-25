@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PACKAGES, stockUpdate, dateOK, validDate, safeHtml } from '../src/index.js';
 
-test('all six packages have correct prices',()=>{
-  assert.deepEqual(Object.values(PACKAGES).map(p=>p.price),[28900,64900,169000,24900,28900,54900]);
+test('all six balloon designs request quotes rather than inventing fixed prices',()=>{
+  assert.deepEqual(Object.keys(PACKAGES),['little-pop','organic-garland','party-arch','statement-backdrop','balloon-bloom','corporate-pop']);
+  assert.ok(Object.values(PACKAGES).every(p=>p.price===null));
 });
 test('stock deduction is a single atomic conditional SQL statement for all variants',()=>{
   const q=stockUpdate([{id:2,quantity:3},{id:7,quantity:4}]);
