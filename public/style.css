@@ -74,3 +74,82 @@ body{background:var(--cream)}
 .card-art img{object-position:center 42%}
 .package-card[data-category="backdrops"] .card-art img{object-position:center 35%}
 .package-card[data-category="corporate"] .card-art img{object-position:center 42%}
+
+
+/* ============================================================
+   ALUSORA — images fully visible, no crop
+   Original WebP proportions: hero 3:2; package images ~1:1.
+   These rules appear last to override previous desktop/mobile
+   fixed heights, object-fit:cover and hover zoom effects.
+   ============================================================ */
+
+/* Hero: display the entire landscape photograph in its natural ratio. */
+.hero-visual {
+  height: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 14px;
+  background: #ede0e8;
+}
+.hero-visual > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  border-radius: 14px;
+}
+
+/* Product cards: let square photographs occupy their own square space.
+   Move labels to a separate strip beneath the photo so they cannot
+   cover the bottom of the decor or hide any balloon details. */
+.card-art {
+  height: auto;
+  aspect-ratio: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 7px;
+  row-gap: 8px;
+  padding-bottom: 12px;
+  background: #f6eff4;
+}
+.card-art > img {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center center;
+  transition: none;
+}
+.package-card:hover .card-art > img {
+  transform: none;
+}
+.card-art > .card-category {
+  position: static;
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: start;
+  margin-left: 12px;
+  white-space: normal;
+}
+.card-art > .best-loved {
+  position: static;
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  margin-right: 12px;
+  white-space: nowrap;
+}
+@media (max-width: 430px) {
+  .card-art {
+    column-gap: 3px;
+  }
+  .card-art > .card-category,
+  .card-art > .best-loved {
+    font-size: 9px;
+    padding: 6px 8px;
+  }
+}

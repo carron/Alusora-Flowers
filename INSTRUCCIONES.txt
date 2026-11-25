@@ -1,9 +1,22 @@
-ALUSORA BALLOONS — IMAGENES ORIGINALES GENERADAS POR IA
+ALUSORA BALLOONS — IMAGENES COMPLETAS (SIN RECORTE)
 
-1. Haz una copia de seguridad de tu proyecto Cloudflare.
-2. Copia el contenido de la carpeta public dentro de la carpeta public de tu proyecto actual, aceptando reemplazar SOLO index.html y style.css.
-3. No reemplaces wrangler.jsonc, src/, D1, RESEND_API_KEY, ni otros secretos.
-4. Publica con npm run deploy, o haz commit/push si Cloudflare esta conectado a GitHub.
-5. Revisa https://alusoraflowers.com/ y fuerza actualizacion Ctrl + Shift + R.
+CAMBIO REALIZADO
+- La imagen principal respeta su proporción 3:2 (sin recorte).
+- Las seis imágenes de paquetes respetan su proporción cuadrada (sin recorte).
+- Las etiquetas de cada paquete aparecen debajo de su fotografía;
+  ya no cubren el contenido de la imagen.
+- Se desactiva el zoom al pasar el cursor sobre las fotografías.
+- Los cambios funcionan en escritorio y móvil.
+- No se alteran formularios, backend, imágenes, secretos o base de datos.
 
-Son imagenes originales generadas por IA. Son conceptos visuales, NO fotos de instalaciones realizadas.
+PARA APLICAR SOBRE TU PROYECTO EXISTENTE
+1. Haz una copia de seguridad de tu proyecto.
+2. Del ZIP de ACTUALIZACION copia SOLO public/style.css a la
+   carpeta public de tu proyecto; reemplaza el archivo anterior.
+3. Publica desde la carpeta principal con: npm run deploy
+   Si publicas por GitHub, sube el archivo CSS actualizado y haz push.
+4. Abre la página y refresca con Ctrl+Shift+R.
+
+NO REEMPLACES wrangler.jsonc NI CAMBIES LOS SECRETOS.
+La versión COMPLETA es una copia del proyecto anterior con este ajuste;
+usa la ACTUALIZACION si tu sitio ya está configurado en Cloudflare.
