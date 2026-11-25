@@ -6,7 +6,11 @@ const PACKAGES = Object.freeze({
   'party-arch': {name:'Celebration Arch',price:null,type:'Arches & entrances'},
   'statement-backdrop': {name:'The Statement Moment',price:null,type:'Milestone celebrations'},
   'balloon-bloom': {name:'Balloon & Bloom',price:null,type:'Balloons + flowers'},
-  'corporate-pop': {name:'Corporate Pop',price:null,type:'Business events'}
+  'corporate-pop': {name:'Corporate Pop',price:null,type:'Business events'},
+  'christmas-posada': {name:'Christmas Posada Arch',price:null,type:'Special dates · Christmas posadas'},
+  'holiday-photo-corner': {name:'Holiday Photo Corner',price:null,type:'Special dates · Christmas photo corner'},
+  'holiday-corporate': {name:'Corporate Holiday Glow',price:null,type:'Special dates · Business holiday events'},
+  'winter-wonderland': {name:'Winter Wonderland',price:null,type:'Special dates · Winter parties'}
 });
 
 const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };

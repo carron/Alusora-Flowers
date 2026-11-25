@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PACKAGES, stockUpdate, dateOK, validDate, safeHtml } from '../src/index.js';
 
-test('all six balloon designs request quotes rather than inventing fixed prices',()=>{
-  assert.deepEqual(Object.keys(PACKAGES),['little-pop','organic-garland','party-arch','statement-backdrop','balloon-bloom','corporate-pop']);
+test('all ten balloon designs request quotes rather than inventing fixed prices',()=>{
+  assert.deepEqual(Object.keys(PACKAGES),['little-pop','organic-garland','party-arch','statement-backdrop','balloon-bloom','corporate-pop','christmas-posada','holiday-photo-corner','holiday-corporate','winter-wonderland']);
   assert.ok(Object.values(PACKAGES).every(p=>p.price===null));
 });
 test('stock deduction is a single atomic conditional SQL statement for all variants',()=>{

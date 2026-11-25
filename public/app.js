@@ -41,6 +41,8 @@
     document.querySelectorAll('.package-card').forEach(card => {
       card.hidden = selected !== 'all' && card.dataset.category !== selected;
     });
+    const seasonalIntro = el('seasonal-break');
+    if (seasonalIntro) seasonalIntro.hidden = selected !== 'all' && selected !== 'seasonal';
   }));
 
   document.querySelectorAll('.request-package').forEach(button => button.addEventListener('click', () => {

@@ -1,0 +1,30 @@
+ALUSORA — Paquetes navideños y posadas (Cloudflare)
+
+QUÉ CAMBIÓ:
+- Cuatro diseños nuevos en “Balloons for every kind of wow.”, dentro de “Special dates · Christmas”.
+- Imágenes fotorrealistas originales generadas con IA, una por paquete, en public/assets/*.webp.
+- Se mantienen las seis tarjetas originales; total 10 diseños.
+- Nuevo filtro; cotizaciones vinculadas al formulario y reconocidas por el servidor (src/index.js).
+- Imágenes cuadradas mostradas COMPLETAS con object-fit:contain, sin zoom.
+- Se mantiene la marca ALUSORA y no se añade “Flowers” al nombre.
+
+PUBLICAR EN TU PROYECTO EXISTENTE:
+1. Haz copia de seguridad del proyecto actual.
+2. Descomprime la ACTUALIZACIÓN directamente en la raíz de tu proyecto, respetando las rutas.
+   Debes reemplazar: public/index.html, public/style.css, public/app.js, src/index.js.
+   Debes agregar los cuatro archivos public/assets/*.webp.
+3. No reemplaces wrangler.jsonc, ni cambies la base de datos D1 o las claves Resend.
+4. Desde CMD en la carpeta con package.json, ejecuta:
+   npm test
+   npm run deploy
+5. Verifica el filtro “Special dates · Christmas” y prueba la solicitud para un paquete
+   navideño. Si Resend ya está configurado, el email llegará a CONTACT_EMAIL.
+6. Revisa en versión móvil: las fotografías se muestran completas (no recortadas).
+
+IMPORTANTE:
+- Son imágenes conceptuales generadas con IA; no fotografías de trabajos realizados.
+- Los paquetes se ofrecen por cotización, sin precios cerrados ni disponibilidad garantizada.
+- El archivo wrangler.jsonc del PROYECTO COMPLETO tiene un database_id de ejemplo:
+  debes conservar tu wrangler.jsonc real del despliegue anterior.
+- El Worker se llama alusora-flowers internamente para no romper conexiones existentes;
+  en la página pública la marca aparece simplemente como ALUSORA.
